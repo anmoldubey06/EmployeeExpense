@@ -8,16 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.cg.entity.Expense;
 import com.cg.exception.ExpenseException;
-import com.cg.repository.ExpenseClaimRepository;
 import com.cg.repository.ExpenseRepository;
 
 @Service
 public class ExpenseService {
 	@Autowired
 	private ExpenseRepository expenseRepo;
-	
-	@Autowired
-	private ExpenseClaimRepository exClaimRepo;
 	
 	public Expense addExpense(Expense expense) {
 		return expenseRepo.save(expense);
@@ -43,7 +39,7 @@ public class ExpenseService {
 				throw new ExpenseException("Expense Not Found");
 			}
 			else {
-				return new ResponseEntity(expenseRepo.findById(code).get(),HttpStatus.OK);
+				return new ResponseEntity<Object>(expenseRepo.findById(code).get(),HttpStatus.OK);
 			}
 		}
 		catch(ExpenseException ex){
@@ -72,7 +68,7 @@ public class ExpenseService {
 		}
 	}
 
-	public void deleteAllExpense() {
+	public void deleteAllExpense( ) {
 		try {
 			if (expenseRepo.count()==0) {
 				throw new ExpenseException("Expense Table is empty, no record to delete");
@@ -98,5 +94,18 @@ public class ExpenseService {
 		catch(ExpenseException ex){
 			throw ex;
 		}
+	}
+	
+	
+	// Methods for test case verification
+	
+	public Expense GetExpenseByExpenseType(Expense expense) {
+		return expenseRepo.findByExpenseType(expense.getExpenseType());
+	}
+
+
+
+	public void deleteExpense(Expense ex) {
+		expenseRepo.delete(ex);
 	}
 }

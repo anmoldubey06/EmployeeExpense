@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.cg.entity.Employee;
 import com.cg.entity.Expense;
 import com.cg.service.ExpenseService;
 
@@ -31,7 +29,7 @@ public class ExpenseController {
 	}
 	
 	@GetMapping("/getExpenseByCode/{code}")
-	public ResponseEntity getEmployee(@PathVariable("code") int code) {
+	public ResponseEntity<?> getEmployee(@PathVariable("code") int code) {
 		return exService.getExpenseByCode(code);
 	}
 	

@@ -17,23 +17,19 @@ public class LoginDetailsService {
 	@Autowired
 	private LoginDetailsRepository lRepo;
 
-	// Optional implementation
-	public String addLoginDetails(LoginDetails logindetails) {
+	public LoginDetails addLoginDetails(LoginDetails logindetails) {
 		String lUsername = logindetails.getlUserName();
 		try {
 			if (lRepo.existsBylUserName(lUsername)) {
 				throw new EmployeeException("Login_Username already exists! Try with another username");
 			} else {
-				lRepo.save(logindetails);
+				return lRepo.save(logindetails);
 			}
 		} catch (LoginDetailsException ex) {
 			throw ex;
 		}
-		return "Login Details Added";
 	}
 
-	// Illegal function :Employee record without login_Details reference is not
-	// valid. LoginDetails will be deleted when employee record is deleted.
 	public ResponseEntity<Object> deleteDetailsById(int id) {
 
 		try {
@@ -45,10 +41,9 @@ public class LoginDetailsService {
 		} catch (LoginDetailsException ex) {
 			throw ex;
 		}
-		return new ResponseEntity("LoginDetails Deleted successfully", HttpStatus.OK);
+		return new ResponseEntity<Object>("LoginDetails Deleted successfully", HttpStatus.OK);
 	}
 
-	// return type changes to be made
 	public String validateUser(LoginDetails logindetails) {
 		Boolean b = false;
 		String lname = logindetails.getlUserName().toString();
@@ -65,10 +60,8 @@ public class LoginDetailsService {
 		} else {
 			return "User does not exist";
 		}
-
 	}
 
-	// return type modified
 	public String logOut(LoginDetails logindetails) {
 		String lUsername = logindetails.getlUserName();
 		try {
@@ -81,6 +74,24 @@ public class LoginDetailsService {
 			throw ex;
 		}
 		return "User: " + lUsername + " has logged out successfully!";
+	}
+	
+	
+	//Methods for Testing
+	public LoginDetails addLoginDetailsTest(LoginDetails logindetails) {
+		return lRepo.save(logindetails);
+	}
+	
+	public LoginDetails findByLRole(LoginDetails ld) {
+		return lRepo.findBylRole(ld.getlRole());
+	}
+	
+	public LoginDetails updateLoginDetails(LoginDetails ld) {
+		return lRepo.save(ld);
+	}
+
+	public void deleteLoginDetails(LoginDetails ld) {
+		lRepo.delete(ld);
 	}
 
 }

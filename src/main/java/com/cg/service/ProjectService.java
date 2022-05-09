@@ -9,35 +9,23 @@ import org.springframework.stereotype.Service;
 import com.cg.entity.Project;
 import com.cg.exception.LoginDetailsException;
 import com.cg.exception.ProjectException;
-import com.cg.repository.ExpenseClaimRepository;
 import com.cg.repository.ProjectRepository;
 
 @Service
 public class ProjectService {
 	@Autowired
-	private ProjectRepository projectRepo;
-
-	@Autowired
-	private ExpenseClaimRepository exClaimRepo;
+	private ProjectRepository projectRepo;  
 
 	public List<Project> getAllProject() {
 		return projectRepo.findAll();
 	}
 
-//	public Project addProject(Project project) {
-//		return projectRepo.save(project);
-//	}
-
 	public Project addProject(Project project) {
 		String ProjDesc = project.getProjectDescription();
 		LocalDate startDate = project.getStartDate();
 		LocalDate endDate = project.getEndDate();
-		int projectId = project.getProjectCode();
-		String designation = exClaimRepo.findExpenseClaimByProjectProjectCode(projectId).getEmployee().getEmpDesignation();
 		try {
-			if (!designation.equals("Admin")) {
-				throw new ProjectException("You are not authorized to add project");
-			} else if (projectRepo.existsByProjectDescription(ProjDesc)) {
+			if (projectRepo.existsByProjectDescription(ProjDesc)) {
 				throw new ProjectException("Project already exists!");
 			} else if (startDate.isAfter(endDate)) {
 				throw new ProjectException("Start date is after End date! Please enter appropriate dates");
@@ -47,31 +35,19 @@ public class ProjectService {
 		} catch (ProjectException ex) {
 			throw ex;
 		}
-
 	}
 
 	public Project updateProject(Project project) {
-		int projectId = project.getProjectCode();
-		String designation = exClaimRepo.findExpenseClaimByProjectProjectCode(projectId).getEmployee().getEmpDesignation();
-		try {
-			if (designation.equals("Admin")) {
-				return projectRepo.save(project);
-			} else {
-				throw new ProjectException("You are not authorized to update project");
-			}
-		} catch (ProjectException ex) {
-			throw ex;
-		}
-
+		return projectRepo.save(project);
 	}
 
-	// cannot delete project as it violates foreign key constraint.
-	// first Delete parent then child
-
-	// modification: Return type to String
 	public String deleteProjectById(int id) {
-		projectRepo.deleteById(id);
-		return "Record deleted successfully!";
+		if (projectRepo.existsById(id)) {
+			projectRepo.deleteById(id);
+			return "Record deleted successfully!";
+		} else {
+			throw new ProjectException("Project with this id does not exist");
+		}
 	}
 
 	public List<Integer> getAllProjectCodes() {
@@ -85,21 +61,31 @@ public class ProjectService {
 		} catch (LoginDetailsException ex) {
 			throw ex;
 		}
-
-		// return projectRepo.getAllProjectCodes();
 	}
 
 	public Project findProjectByCode(int projectCode) {
-		try {
-			if (!projectRepo.existsByProjectCode(projectCode)) {
-				throw new ProjectException("ProjectCode does not exist!");
-			} else {
-				return projectRepo.findById(projectCode).get();
-			}
-		} catch (ProjectException ex) {
-			throw ex;
+		if (projectRepo.existsById(projectCode)) {
+			return projectRepo.findById(projectCode).get();
+		} else {
+			throw new ProjectException("This project id does not exist");
 		}
 
 	}
 
+	// Test Methods
+	public Project addProjectTest(Project p) {
+		return projectRepo.save(p);
+	}
+
+	public Project getProjectDescription(Project p) {
+		return projectRepo.findByProjectDescription(p.getProjectDescription());
+	}
+
+	public Project testUpdateProjectFunction(Project p) {
+		return projectRepo.save(p);
+	}
+
+	public void deleteProject(Project p) {
+		projectRepo.delete(p);
+	}
 }

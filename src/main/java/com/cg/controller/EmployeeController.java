@@ -19,7 +19,7 @@ import com.cg.service.EmployeeService;
 public class EmployeeController {
 	@Autowired
 	private EmployeeService eService;
-	
+	 
 	@PostMapping("/addEmployee")
 	public String addEmployee(@RequestBody Employee employee) {
 		return eService.addEmployee(employee);

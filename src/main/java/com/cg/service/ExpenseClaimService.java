@@ -81,7 +81,7 @@ public class ExpenseClaimService {
 		} catch (ExpenseClaimException ex) {
 			throw ex;
 		}
-		return new ResponseEntity(exClaimRepo.findById(id).get(), HttpStatus.OK);
+		return new ResponseEntity<Object>(exClaimRepo.findById(id).get(), HttpStatus.OK);
 
 	}
 
@@ -93,7 +93,7 @@ public class ExpenseClaimService {
 		try {
 			if (!designation.equals("Project Manager")) {
 				throw new ExpenseClaimException(
-						"you do not have Project Manager privileges for pdating Expense Claim!");
+						"you do not have Project Manager privileges for updating Expense Claim!");
 			} else {
 				return exClaimRepo.save(expenseclaim);
 			}
@@ -130,5 +130,22 @@ public class ExpenseClaimService {
 			throw ex;
 		}
 	}
+	
+	// Test Specific methods
+		public ExpenseClaim addExpenseClaimfortest(ExpenseClaim expenseclaim) {
+			return exClaimRepo.save(expenseclaim);
+		}
+
+		public ExpenseClaim GetExpenseClaimByAmount(ExpenseClaim expenseclaim) {
+			return exClaimRepo.findByExpenseAmount(expenseclaim.getExpenseAmount());
+		}
+
+		public ExpenseClaim UpdateExpenseClaimfortest(ExpenseClaim expenseclaim) {
+			return exClaimRepo.save(expenseclaim);
+		}
+
+		public void deleteExpenseClaim(ExpenseClaim expenseclaim) {
+			exClaimRepo.delete(expenseclaim);
+		}
 
 }
